@@ -13,7 +13,7 @@ yarn add art-template
 
 ## 3. src/app.js 搭建基本的koa 代码  
 1. //src/router/routes.js  基本的路由
-```
+```javascript
 const Router = require('koa-router')
 // const musicCtrl = require('../controller/music')   // 这里引入controller
 
@@ -41,7 +41,7 @@ module.exports = app => {
 }
 ```
 2. //src/config/config.js 基本的配置
-```
+```javascript
 const env = process.env.NODE_ENV || 'development'
 
 let port,database;
@@ -66,7 +66,7 @@ module.exports = {
 }
 ```
 3. //src/app.js  koa基本代码
-```
+```javascript
 const Koa = require('koa')
 const path = require('path')
 const koalogger = require('koa-logger')
