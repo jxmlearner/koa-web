@@ -52,7 +52,8 @@ if(env === 'development') { // 如果是开发环境
         host: 'localhost',
         database: 'koa-test',
         username: 'root',
-        password: '123456'
+        password: '123456',
+        port: '3306'
     }
 }
 
@@ -109,3 +110,89 @@ app.listen(port, ()=> {
 ```
 现在可以启动试一试：
 `npm run dev`
+
+## 5. 添加node.js的数据库访问orm sequelize
+[sequelize官方文档](http://docs.sequelizejs.com/manual/installation/getting-started.html)
+`yarn add sequelize`   
+
+`yarn add tedious`     --这是sqlserver  
+如果是使用mysql数据库,则是安装mysql2
+`yarn add mysql2`
+
+## 6. 编写数据连接和测试
+//src/util/mysqldb.js
+```javascript
+const Sequelize = require('sequelize')
+const { database } = require('../config/config')   //配置文件
+
+const sequelize = new Sequelize(database.database, database.username, database.password, {
+    host: database.host,
+    dialect: 'mysql',
+    operatorsAliases: false,
+    pool: {
+        max: 5,   // 连接池中最大连接数量
+        min: 0,
+        acquire: 30000,
+        idle: 10000  // 如果一个线程 10 秒钟内没有被使用过的话，那么就释放线程
+    },
+    define: {
+        freezeTableName: true,  // 如果为 true 则表的名称和 model 相同，即 user  为 false MySQL创建的表名称会是复数 users
+        timestamps: false
+    }
+})
+
+/*  测试是否可以连接成功
+sequelize
+  .authenticate()
+  .then(() => {
+    console.log('Connection has been established successfully.');
+  })
+  .catch(err => {
+    console.error('Unable to connect to the database:', err);
+  });
+*/
+module.exports = sequelize
+```
+//src/util/dbconnecttest.js 数据库连接测试代码
+```javascript
+const sequelize = require('./mysqldb.js')
+/*  测试是否可以连接成功 */
+sequelize
+    .authenticate()
+    .then(() => {
+        console.log('Connection has been established successfully.');
+    })
+    .catch(err => {
+        console.error('Unable to connect to the database:', err);
+    });
+```
+![测试结果](./pics/dbconnecttest.png)
+
+## 7. 写model
+//src/models/Singer.js
+```
+const Sequelize=require('sequelize')
+const sequelize=require('../util/mysqldb')
+
+const Singer=sequelize.define('singer',{
+  id: {
+    type:Sequelize.INTEGER,     //自增主键
+    primaryKey:true,
+    autoIncrement:true
+  },
+  country:Sequelize.STRING,         //因为是手动建的表,所以model中的长度啥的都可以不定义  
+  singer_id:Sequelize.STRING,
+  singer_mid:Sequelize.STRING,
+  singer_name:Sequelize.STRING,
+  singer_pic:Sequelize.STRING,
+  area:Sequelize.INTEGER,
+  genre:Sequelize.INTEGER,
+  index:Sequelize.INTEGER,
+  sex:Sequelize.INTEGER,
+  createTime:Sequelize.STRING
+},{
+    tableName:'tb_music_singer'
+})
+
+module.exports=Singer
+```

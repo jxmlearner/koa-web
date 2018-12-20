@@ -8,7 +8,8 @@ if(env === 'development') { // 如果是开发环境
         host: 'localhost',
         database: 'koa-test',
         username: 'root',
-        password: '123456'
+        password: '123456',
+        port: '3306'
     }
 }
 
