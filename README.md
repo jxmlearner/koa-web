@@ -295,3 +295,35 @@ app.use(async (ctx, next) => {       // 写日志的中间件, 此中间件应�
     }
 })
 ```
+
+## 10. 安装和使用koa-body
+* 参考：http://www.ptbird.cn/koa-body.html  
+* [koa-body的github](https://github.com/dlau/koa-body)
+* `yarn add koa-body`  --使用了 koa-body 就移除掉对koa-bodyparser中间件的使用(解析了两遍,没意义)
+* app.js中使用 koa-body
+```javascript
+const path = require('path')
+const fs = require('fs')
+const koaBody = require('koa-body')
+
+app.use(koaBody({
+    multipart:true, // 支持文件上传
+    encoding:'gzip',
+    formidable:{
+        uploadDir:path.join(__dirname,'upload/'),  // 设置文件上传目录,要确保这个文件夹已经存在,否则会报错
+        keepExtensions: true,    // 保持文件的后缀
+        //maxFieldsSize:2 * 1024 * 1024, // 所有的字段大小(不包括文件,默认是20M)
+        //maxFileSize: 200*1024*1024,    //上传的文件大小限制,默认是200M
+        onFileBegin:(name,file) => { // 文件上传前的设置
+            // console.log(`name: ${name}`);
+            // console.log(file);
+            //检查上传的目录是否存在
+            let upFolder = path.resolve(__dirname,'upload')
+            let flag = fs.existsSync(upFolder)
+            if(!flag) {   //如果目录不存在,先创建
+                fs.mkdirSync(upFolder)
+            }
+        },
+    }
+}))
+```

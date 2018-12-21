@@ -7,9 +7,16 @@ module.exports = app => {
     const apiRouter = new Router()
 
     router.get('/', async(ctx,next) => {
-        ctx.type = 'text/html'
-        ctx.body = `<h1>这里是Koa首页</h1>`
+        //ctx.type = 'text/html'
+        //ctx.body = `<h1>这里是Koa首页</h1>`
+        await ctx.render('index',{title:'首页'})
     })
+    router.post('/upload',async(ctx) => {  //上传文件
+        console.log(ctx.request.files)
+        ctx.body = JSON.stringify(ctx.request.files)
+    })
+
+
     router.get('/singer', musicCtrl.singer)
 
     // apiRouter.get('/music/focuslist',musicCtrl.focuslist)  //取焦点图列表

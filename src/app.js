@@ -1,9 +1,11 @@
 const Koa = require('koa')
 const path = require('path')
+const fs = require('fs')
 const koalogger = require('koa-logger')
 const cors = require('kcors')
 const json = require('koa-json')
-const bodyparser = require('koa-bodyparser')
+// const bodyparser = require('koa-bodyparser')
+const koaBody = require('koa-body')
 const render = require('koa-art-template')           //art-template模板引擎
 const static = require('koa-static')                 //静态资源
 const { port } = require('./config/config')
@@ -43,7 +45,27 @@ app.use(async (ctx, next) => {       // 写日志的中间件
 
 app.use(koalogger())
 app.use(json())
-app.use(bodyparser())
+// app.use(bodyparser())
+app.use(koaBody({
+    multipart:true, // 支持文件上传
+    encoding:'gzip',
+    formidable:{
+        uploadDir:path.join(__dirname,'upload/'),  // 设置文件上传目录,要确保这个文件夹已经存在,否则会报错
+        keepExtensions: true,    // 保持文件的后缀
+        //maxFieldsSize:2 * 1024 * 1024, // 所有的字段大小(不包括文件,默认是20M)
+        //maxFileSize: 200*1024*1024,    //上传的文件大小限制,默认是200M
+        onFileBegin:(name,file) => { // 文件上传前的设置
+            // console.log(`name: ${name}`);
+            // console.log(file);
+            //检查上传的目录是否存在
+            let upFolder = path.resolve(__dirname,'upload')
+            let flag = fs.existsSync(upFolder)
+            if(!flag) {   //如果目录不存在,先创建
+                fs.mkdirSync(upFolder)
+            }
+        },
+    }
+}))
 
 // 加载路由
 router(app)

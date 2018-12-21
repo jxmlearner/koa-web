@@ -1,0 +1,13 @@
+{{ extend './layout.html'}}
+
+{{block 'title'}}{{title}}{{/block}}
+{{block 'body'}}
+<h3><a href="/singer">去singer页</a></h3>
+<h1>koa-body文件上传示例</h1>
+<form action="/upload" enctype="multipart/form-data" method="post">
+    <input type="text" name="username" placeholder="username"><br>
+    <input type="text" name="title" placeholder="tile of film"><br>
+    <input type="file" name="uploads" multiple="multiple"><br>
+    <button type="submit">Upload</button>
+</form>
+{{/block}}
