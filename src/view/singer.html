@@ -1,0 +1,88 @@
+{{ extend './layout.html'}}
+
+{{block 'title'}}{{title}}{{/block}}
+{{block 'css'}}
+<link href="/style/style.css" rel="stylesheet" />
+{{/block}}
+{{block 'body'}}
+<div class="header">
+    <h2>万千歌手 尽在眼前</h2>
+</div>
+<div class="out-box">
+    <div class="inner-box">
+        <div class="tag-container">
+            <div class="singer-tag-list js-index">
+                <a href="javascript:;" class="singer_tag__item" data-key="index" data-id="-100">热门</a>
+                <a href="javascript:;" class="singer_tag__item" data-key="index" data-id="1">A</a>
+                <a href="javascript:;" class="singer_tag__item" data-key="index" data-id="2">B</a>
+                <a href="javascript:;" class="singer_tag__item" data-key="index" data-id="3">C</a>
+                <a href="javascript:;" class="singer_tag__item" data-key="index" data-id="4">D</a>
+                <a href="javascript:;" class="singer_tag__item" data-key="index" data-id="5">E</a>
+                <a href="javascript:;" class="singer_tag__item" data-key="index" data-id="6">F</a>
+                <a href="javascript:;" class="singer_tag__item" data-key="index" data-id="7">G</a>
+                <a href="javascript:;" class="singer_tag__item" data-key="index" data-id="8">H</a>         
+            </div>
+            <!-- <div class="singer-tag-list js-area">
+                <a href="javascript:;" class="singer_tag__item" data-key="area" data-id="-100">全部</a>	
+                <a href="javascript:;" class="singer_tag__item" data-key="area" data-id="200">内地</a>	
+                <a href="javascript:;" class="singer_tag__item" data-key="area" data-id="2">港台</a>	
+                <a href="javascript:;" class="singer_tag__item" data-key="area" data-id="5">欧美</a>	
+                <a href="javascript:;" class="singer_tag__item" data-key="area" data-id="4">日本</a>	
+                <a href="javascript:;" class="singer_tag__item" data-key="area" data-id="3">韩国</a>	
+                <a href="javascript:;" class="singer_tag__item" data-key="area" data-id="6">其他</a>    
+            </div> -->
+        </div>
+        <div class="singer-list">
+            <ul class="singer_list_txt">    
+                {{each singerList.rows singer key}}
+                <li><a href="https://y.qq.com/n/yqq/singer/{{singer.singer_mid}}.html#stat=y_new.singerlist.singername" data-singermid="{{singer.singer_mid}}" data-singerid="{{singer.singer_id}}" title="{{singer.singer_name}}">{{singer.singer_name}}</a></li>    
+                {{/each}}                
+            </ul>
+        </div>
+    </div>
+</div>
+{{/block}}
+{{block 'scripts'}}
+<script>
+    window.onload=function() {
+        handleSingerCateClick()
+        var index = Number(getQueryString('index') || -100)
+        let indexArr = Array.from(document.querySelector('.singer-tag-list.js-index').querySelectorAll('a.singer_tag__item'))
+        for(let item of indexArr) {
+            let id= Number(item.getAttribute('data-id'))
+            if(index === id) {
+                item.className = 'singer_tag__item singer_tag__item--select'
+                break
+            }
+        }
+    }
+    function handleSingerCateClick() {  // 头部每一个分类项的点击事件
+        [...document.querySelectorAll('a.singer_tag__item')].forEach(link => {
+            link.onclick = function() {
+                let parent = this.parentElement;
+                let activeItem = parent.querySelector('a.singer_tag__item--select')
+                activeItem.className = 'singer_tag__item'
+                this.className = 'singer_tag__item singer_tag__item--select'
+
+                let selectedItems = parent.parentElement.querySelectorAll("a.singer_tag__item--select")
+                let qs = ''
+                selectedItems.forEach(l => {
+                    let key= l.getAttribute('data-key')
+                    let id= l.getAttribute('data-id')
+                    qs+=`&${key}=${id}`
+                })
+                let url='/singer?'+qs.substr(1)+'&t='+(+new Date)
+                window.location.href=url
+            }
+        })
+    }
+    function getQueryString(name) {
+        var reg = new RegExp('(^|&)' + name + '=([^&]*)(&|$)', 'i');
+        var r = window.location.search.substr(1).match(reg);
+        if (r != null) {
+            return unescape(r[2]);
+        }
+        return null;
+    }
+</script>
+{{/block}}

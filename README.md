@@ -10,6 +10,7 @@ yarn add koa-art-template
 // 使用 koa-art-template中间件 必然要先安装 art-template
 yarn add art-template
 ```
+[art-template中文文档](http://aui.github.io/art-template/zh-cn/docs/)
 
 ## 3. src/app.js 搭建基本的koa 代码  
 1. //src/router/routes.js  基本的路由
@@ -170,7 +171,7 @@ sequelize
 
 ## 7. 写model
 //src/models/Singer.js
-```
+```javascript
 const Sequelize=require('sequelize')
 const sequelize=require('../util/mysqldb')
 
@@ -196,3 +197,75 @@ const Singer=sequelize.define('singer',{
 
 module.exports=Singer
 ```
+## 8. 编写controller、service和增加路由及 art-template的前端模板
++ //src/view/layout.html 先加个布局页,歌手列表的布局是仿的QQ音乐的歌手页
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>{{block 'title'}}音乐数据-{{/block}}</title>
+    {{block 'css'}}{{/block}}
+</head>
+<body>
+    {{block 'body'}}{{/block}}
+    {{block 'scripts'}}{{/block}}
+</body>
+</html>
+```
++ //src/view/singer.html页面(略)
++ //src/controller/music.js
+```javascript
+const service = require('../service/singer')
+const Result=require('../models/result')
+
+let result=new Result()
+
+module.exports = {
+    singer: async(ctx) => {    // 歌手页面
+        let {index = -100, area = -100, pageIndex = 1, pageSize =80 } = ctx.query
+        index=Number(index), area=Number(area), pageIndex=Number(pageIndex),pageSize=Number(pageSize) 
+        let singerList = await service.getSingerList({ index, area, pageIndex, pageSize })
+        let obj= {
+            title: '歌手',
+            singerList,
+            index,
+            area
+        }
+        await ctx.render('singer', obj)
+    }
+}
+```
++ //src/service/singer.js
+```javascript
+const Singer = require('../models/Singer')
+const sequelize = require('../util/mysqldb')
+const Op = require('sequelize').Op
+
+module.exports = {
+    getSingerList: async ({ index, area, pageIndex, pageSize }) => {   //取歌手的分页数据
+        let offset = (pageIndex-1)*pageSize
+        let singers = await Singer.findAndCountAll({
+            where: {
+                index: {[Op.eq]:index},
+                area: {[Op.eq]:area}
+            },
+            offset,
+            limit: pageSize
+        })
+        return singers
+    }
+}
+```
++ //src/router/routes.js中添加页面路由
+```javascript
+const musicCtrl = require('../controller/music')   // 这里引入controller
+
+router.get('/singer', musicCtrl.singer)
+```
+启动程序, 访问 http://localhost:5000/singer  (仿QQ音乐歌手面,单纯的呈现,预留了分页,但没有实现)
+
+![歌手页](./pics/singer.png)
+

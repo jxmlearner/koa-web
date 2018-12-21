@@ -1,5 +1,5 @@
 const Router = require('koa-router')
-// const musicCtrl = require('../controller/music')   // 这里引入controller
+const musicCtrl = require('../controller/music')   // 这里引入controller
 
 module.exports = app => {
     const router = new Router()
@@ -10,6 +10,7 @@ module.exports = app => {
         ctx.type = 'text/html'
         ctx.body = `<h1>这里是Koa首页</h1>`
     })
+    router.get('/singer', musicCtrl.singer)
 
     // apiRouter.get('/music/focuslist',musicCtrl.focuslist)  //取焦点图列表
 

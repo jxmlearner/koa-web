@@ -5,7 +5,7 @@ let port,database;
 if(env === 'development') { // 如果是开发环境
     port = 5000
     database = {
-        host: 'localhost',
+        host: '192.168.4.167',
         database: 'koa-test',
         username: 'root',
         password: '123456',
