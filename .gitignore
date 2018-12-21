@@ -59,3 +59,8 @@ typings/
 
 # next.js build output
 .next
+
+# 打包生成目录及调试目录和日志目录
+dist/
+.vscode/
+logs/

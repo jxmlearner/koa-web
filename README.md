@@ -269,3 +269,29 @@ router.get('/singer', musicCtrl.singer)
 
 ![歌手页](./pics/singer.png)
 
+## 9. 加入log4js写日志  
+`yarn add log4js`  
+准备好 //src/config/log_config.js日志配置文件 和 //src/util/logUtil.js写日志助手    
+在 //src/app.js中加入中间件
+```javascript
+//引入log4js帮助js
+const logUtil = require('./util/logUtil')
+app.use(async (ctx, next) => {       // 写日志的中间件, 此中间件应放在业务中间件的前面
+    //响应开始时间
+    const start = new Date();
+    //响应间隔时间
+    var ms;
+    try {
+        //开始进入到下一个中间件
+        await next()
+        ms = new Date() - start
+        //记录响应日志
+        // logUtil.logResponse(ctx, ms)
+
+    } catch (error) {
+        ms = new Date() - start
+        //记录异常日志
+        logUtil.logError(ctx, error, ms)
+    }
+})
+```
