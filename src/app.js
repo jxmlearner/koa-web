@@ -58,7 +58,7 @@ app.use(koaBody({
             // console.log(`name: ${name}`);
             // console.log(file);
             //检查上传的目录是否存在
-            let upFolder = path.resolve(__dirname,'upload')
+            let upFolder = path.resolve(__dirname,'upload')  //放置于public目录(也就是静态资源目录,才好前端页面直接引用)
             let flag = fs.existsSync(upFolder)
             if(!flag) {   //如果目录不存在,先创建
                 fs.mkdirSync(upFolder)

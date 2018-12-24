@@ -310,7 +310,7 @@ app.use(koaBody({
     multipart:true, // 支持文件上传
     encoding:'gzip',
     formidable:{
-        uploadDir:path.join(__dirname,'upload/'),  // 设置文件上传目录,要确保这个文件夹已经存在,否则会报错
+        uploadDir:path.join(__dirname,'public/upload/'),  // 设置文件上传目录,要确保这个文件夹已经存在,否则会报错
         keepExtensions: true,    // 保持文件的后缀
         //maxFieldsSize:2 * 1024 * 1024, // 所有的字段大小(不包括文件,默认是20M)
         //maxFileSize: 200*1024*1024,    //上传的文件大小限制,默认是200M
@@ -318,7 +318,7 @@ app.use(koaBody({
             // console.log(`name: ${name}`);
             // console.log(file);
             //检查上传的目录是否存在
-            let upFolder = path.resolve(__dirname,'upload')
+            let upFolder = path.resolve(__dirname,'public/upload')   //放置于public目录(也就是静态资源目录,才好前端页面直接引用)
             let flag = fs.existsSync(upFolder)
             if(!flag) {   //如果目录不存在,先创建
                 fs.mkdirSync(upFolder)
